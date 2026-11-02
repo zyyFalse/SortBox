@@ -1,0 +1,20 @@
+appId: app.sortbox.desktop
+productName: Sortbox
+npmRebuild: true
+directories:
+  output: dist
+files:
+  - out
+  - package.json
+asarUnpack:
+  - "**/node_modules/better-sqlite3/**"
+  - "**/*.node"
+win:
+  target:
+    - nsis
+mac:
+  target:
+    - dmg
+linux:
+  target:
+    - AppImage
