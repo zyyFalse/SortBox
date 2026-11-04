@@ -3,7 +3,7 @@ import type { AgentAction } from '@shared/types/domain';
 import { agentActionLabel, roundLabel } from '@shared/types/domain';
 import type { LogViewModel } from '@shared/viewmodel/LogViewModel';
 import { Empty } from '../components/Empty';
-import { formatTime } from '../format';
+import { endOfLocalDay, formatDateInput, formatTime, startOfLocalDay } from '../format';
 import { useViewModel } from '../hooks/useViewModel';
 
 const ACTIONS: Array<AgentAction | ''> = ['', 'archived', 'unclassified', 'failed', 'simulated', 'skipped'];
@@ -30,6 +30,26 @@ export function LogView(props: { vm: LogViewModel }): ReactElement {
           value={state.query.keyword ?? ''}
           onChange={(event): void => void props.vm.setQuery({ keyword: event.target.value || null })}
         />
+        <label>
+          从
+          <input
+            type="date"
+            value={formatDateInput(state.query.from)}
+            onChange={(event): void => {
+              void props.vm.setQuery({ from: startOfLocalDay(event.target.value) });
+            }}
+          />
+        </label>
+        <label>
+          到
+          <input
+            type="date"
+            value={formatDateInput(state.query.to)}
+            onChange={(event): void => {
+              void props.vm.setQuery({ to: endOfLocalDay(event.target.value) });
+            }}
+          />
+        </label>
         <button type="button" onClick={(): void => void props.vm.undoLatest()}>撤销最近一次</button>
       </div>
       {state.items.length === 0 ? <Empty text="暂无处理记录" /> : null}

@@ -149,6 +149,28 @@ describe('sqlite repositories', (): void => {
     expect((await logs.getById(created.id))?.undone).toBe(true);
   });
 
+  it('按创建时间的起止筛选处理记录', async (): Promise<void> => {
+    const logs = new SqliteAgentLogRepository(open());
+    const base = {
+      roundId: 1,
+      materialId: null,
+      presetId: null,
+      action: 'archived' as const,
+      toPath: null,
+      reason: '归档',
+      trace: 'trace',
+      durationMs: 1,
+      dryRun: false,
+      undone: false,
+      undoneAt: null
+    };
+    await logs.append({ ...base, fromPath: 'C:/down/old.pdf', createdAt: 1000 });
+    await logs.append({ ...base, fromPath: 'C:/down/mid.pdf', createdAt: 5000 });
+    await logs.append({ ...base, fromPath: 'C:/down/new.pdf', createdAt: 9000 });
+    const rows = await logs.query({ action: null, from: 5000, to: 9000, keyword: null });
+    expect(rows.map((item) => item.fromPath)).toEqual(['C:/down/new.pdf', 'C:/down/mid.pdf']);
+  });
+
   it('偏好缺字段时回到默认值', async (): Promise<void> => {
     const db = open();
     db.raw.prepare(`INSERT INTO preference (key, value) VALUES ('agentDryRun', 'true')`).run();

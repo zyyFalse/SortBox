@@ -79,8 +79,13 @@ export class LogViewModel extends ViewModelBase<void, LogState> {
   }
 
   private async refresh(): Promise<void> {
+    const query = this.getState().query;
+    if (query.from !== null && query.to !== null && query.from > query.to) {
+      this.setState({ loading: false, error: '结束日期不能早于开始日期', items: [] });
+      return;
+    }
     try {
-      const items = await this.api.queryLogs(this.getState().query);
+      const items = await this.api.queryLogs(query);
       this.setState({ loading: false, error: null, items });
     } catch (error) {
       this.captureError(error, '读取处理记录失败');

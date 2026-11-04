@@ -12,4 +12,7 @@ declare global {
   }
 }
 
+/** 样式由 Vite 打包，这里只声明副作用导入合法。 */
+declare module '*.css';
+
 export {};

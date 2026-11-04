@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { ContentNavigationConstant } from '@shared/navigation/constants';
 import type { ContentNavigationService, RootNavigationService } from '@shared/navigation/services';
 import { DashboardViewModel } from '@shared/viewmodel/DashboardViewModel';
+import { LogViewModel } from '@shared/viewmodel/LogViewModel';
 import { SettingsViewModel } from '@shared/viewmodel/SettingsViewModel';
 import { UnclassifiedViewModel } from '@shared/viewmodel/UnclassifiedViewModel';
+import { endOfLocalDay, formatDateInput, startOfLocalDay } from '../../src/renderer/format';
 import { FakeSortboxApi, FailingRunApi } from '../helpers/FakeSortboxApi';
 
 function contentNav(): ContentNavigationService & { key: string | null; parameter: unknown } {
@@ -48,6 +50,29 @@ describe('ViewModel', (): void => {
     expect(parameter.id).toBeNull();
     expect(parameter.draft.name).toBe('发票');
     vm.dispose();
+  });
+
+  it('结束日期早于开始日期时不再查询', async (): Promise<void> => {
+    const api = new FakeSortboxApi();
+    const queryLogs = vi.spyOn(api, 'queryLogs');
+    const vm = new LogViewModel(api, contentNav());
+    await vi.waitFor((): void => {
+      expect(vm.getState().loading).toBe(false);
+    });
+    const calls = queryLogs.mock.calls.length;
+    await vm.setQuery({ from: 2_000, to: 1_000 });
+    expect(vm.getState().error).toBe('结束日期不能早于开始日期');
+    expect(vm.getState().items).toEqual([]);
+    expect(queryLogs.mock.calls.length).toBe(calls);
+    vm.dispose();
+  });
+
+  it('日期框按当地的一天起止换算', (): void => {
+    expect(startOfLocalDay('2026-11-04')).toBe(new Date(2026, 10, 4, 0, 0, 0, 0).getTime());
+    expect(endOfLocalDay('2026-11-04')).toBe(new Date(2026, 10, 4, 23, 59, 59, 999).getTime());
+    expect(formatDateInput(endOfLocalDay('2026-11-04'))).toBe('2026-11-04');
+    expect(startOfLocalDay('')).toBeNull();
+    expect(endOfLocalDay('2026-13-40')).toBeNull();
   });
 
   it('保存设置把草稿交给接口，打开习惯文件不读盘', async (): Promise<void> => {

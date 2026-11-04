@@ -66,6 +66,8 @@ input, select {
 
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
+.row label { display: inline-flex; align-items: center; gap: 6px; }
+
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
 
 .card {
