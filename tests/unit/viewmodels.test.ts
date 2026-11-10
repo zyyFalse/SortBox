@@ -32,6 +32,23 @@ describe('ViewModel', (): void => {
     });
     await vm.runNow();
     expect(vm.getState().error).toBe('整理失败');
+    expect(vm.getState().pending).toBeNull();
+    vm.dispose();
+  });
+
+  it('立即整理成功后给出本轮合计，并能打开这一轮', async (): Promise<void> => {
+    const api = new FakeSortboxApi();
+    const navigation = contentNav();
+    const vm = new DashboardViewModel(api, navigation);
+    await vi.waitFor((): void => {
+      expect(vm.getState().loading).toBe(false);
+    });
+    await vm.runNow();
+    expect(vm.getState().notice).toContain('归档 0');
+    expect(vm.getState().pending).toBeNull();
+    vm.openRound(1);
+    expect(navigation.key).toBe(ContentNavigationConstant.ROUND_DETAIL);
+    expect(navigation.parameter).toBe(1);
     vm.dispose();
   });
 

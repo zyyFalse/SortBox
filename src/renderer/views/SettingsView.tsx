@@ -15,6 +15,7 @@ export function SettingsView(props: { vm: SettingsViewModel }): ReactElement {
     <section className="page" data-view="Settings">
       <h1>设置</h1>
       {state.error ? <p className="error">{state.error}</p> : null}
+      {state.notice ? <p className="notice">{state.notice}</p> : null}
       <div className="form">
         <label>策略</label>
         <select value={draft.triggerPolicy} onChange={(event): void => props.vm.setPolicy(event.target.value as TriggerPolicy)}>
@@ -26,7 +27,7 @@ export function SettingsView(props: { vm: SettingsViewModel }): ReactElement {
         <input type="number" value={draft.idleSettleMs} onChange={(event): void => props.vm.setDraft('idleSettleMs', Number(event.target.value))} />
         <label>最长等待</label>
         <input type="number" value={draft.maxDeferMs} onChange={(event): void => props.vm.setDraft('maxDeferMs', Number(event.target.value))} />
-        <label>定时间隔</label>
+        <label>定时间隔（毫秒）</label>
         <input type="number" value={draft.intervalMs} onChange={(event): void => props.vm.setDraft('intervalMs', Number(event.target.value))} />
         <label>保底间隔</label>
         <input type="number" value={draft.intervalFallbackMs} onChange={(event): void => props.vm.setDraft('intervalFallbackMs', Number(event.target.value))} />
@@ -50,9 +51,16 @@ export function SettingsView(props: { vm: SettingsViewModel }): ReactElement {
       <div className="row">
         <button className="ghost" type="button" onClick={(): void => void props.vm.addWatchFolder()}>添加目录</button>
         <button className="ghost" type="button" onClick={(): void => void props.vm.pickUnclassified()}>选择未分类目录</button>
-        <button type="button" onClick={(): void => void props.vm.save()}>保存</button>
+        <button type="button" disabled={state.loading} onClick={(): void => void props.vm.save()}>
+          {state.loading ? '请稍候…' : '保存'}
+        </button>
         <button className="ghost" type="button" onClick={(): void => void props.vm.resetInitialization()}>重新初始化</button>
       </div>
+      <p className="about">
+        定时间隔只在策略选「定时」时生效。300000 毫秒是 5 分钟。
+        「静默检测」不是轮询：下载目录安静几秒就会整理一次。
+        {draft.intervalMs === 60000 ? '当前还是旧的默认 1 分钟，改成 300000 再保存就会变成 5 分钟。' : ''}
+      </p>
       <h2>整理习惯</h2>
       {habits ? (
         <div className="stack">

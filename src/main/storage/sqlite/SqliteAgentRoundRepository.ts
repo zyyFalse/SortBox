@@ -53,4 +53,24 @@ export class SqliteAgentRoundRepository implements AgentRoundRepository {
       | undefined;
     return Promise.resolve(row ? mapRound(row) : null);
   }
+
+  /** 最近若干轮，新的在前。控制台用它代替逐文件列表。 */
+  listRecent(limit: number): Promise<AgentRound[]> {
+    const rows = this.database.raw
+      .prepare(`SELECT * FROM agent_round ORDER BY id DESC LIMIT ?`)
+      .all(limit) as Array<{
+      id: number;
+      reason: AgentRound['reason'];
+      started_at: number;
+      finished_at: number;
+      scanned: number;
+      archived: number;
+      unclassified: number;
+      failed: number;
+      simulated: number;
+      skipped: number;
+      deferred: number;
+    }>;
+    return Promise.resolve(rows.map(mapRound));
+  }
 }

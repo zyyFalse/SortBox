@@ -66,6 +66,8 @@ export interface SortboxApi {
   getAgentSnapshot(): Promise<AgentSnapshot>;
   getAgentStats(): Promise<AgentStats>;
   getLatestRound(): Promise<AgentRound | null>;
+  listRecentRounds(limit: number): Promise<AgentRound[]>;
+  listRoundLogs(roundId: number): Promise<AgentLogView[]>;
   startAgent(): Promise<void>;
   stopAgent(): Promise<void>;
   pauseAgent(): Promise<void>;

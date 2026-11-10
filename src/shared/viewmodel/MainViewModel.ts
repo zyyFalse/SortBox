@@ -23,6 +23,7 @@ import { LogViewModel } from './LogViewModel';
 import { PresetDetailViewModel, type PresetDetailParam } from './PresetDetailViewModel';
 import { PresetListViewModel } from './PresetListViewModel';
 import { QueryViewModel } from './QueryViewModel';
+import { RoundDetailViewModel } from './RoundDetailViewModel';
 import { ResultViewModel } from './ResultViewModel';
 import { SettingsViewModel } from './SettingsViewModel';
 import { UnclassifiedViewModel } from './UnclassifiedViewModel';
@@ -144,6 +145,11 @@ export class MainViewModel
     }
     if (key === ContentNavigationConstant.FILE_DETAIL) {
       const vm = new FileDetailViewModel(this.api);
+      vm.setParameter(parameter as number);
+      return vm;
+    }
+    if (key === ContentNavigationConstant.ROUND_DETAIL) {
+      const vm = new RoundDetailViewModel(this.api);
       vm.setParameter(parameter as number);
       return vm;
     }

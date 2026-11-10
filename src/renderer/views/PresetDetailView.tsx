@@ -33,6 +33,11 @@ export function PresetDetailView(props: { vm: PresetDetailViewModel }): ReactEle
         <input type="number" value={draft.maxSizeMb} onChange={(event): void => props.vm.setField('maxSizeMb', Number(event.target.value))} />
       </div>
       <p>预览路径 {state.preview}</p>
+      <p className="about">
+        这一行只替换「目录模板」里的占位符。默认模板是 {'{yyyy-MM}/{origFileName}'}，所以改名称、类型或文件名条件时，预览路径不会变。
+        把模板改成 {'{preset}/{origFileName}'} 后，名称才会出现在路径里。
+        要看某个文件名会归到哪，改下面的样例文件名，再点「试命中」。
+      </p>
       <div className="row">
         <button className="ghost" type="button" onClick={(): void => props.vm.refreshPreview()}>刷新预览</button>
         <input value={state.sampleName} onChange={(event): void => props.vm.setSampleName(event.target.value)} />

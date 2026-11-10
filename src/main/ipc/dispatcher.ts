@@ -101,6 +101,10 @@ export class IpcDispatcher {
         return this.materials.stats();
       case 'getLatestRound':
         return this.rounds.latest();
+      case 'listRecentRounds':
+        return this.rounds.listRecent(args[0] as number);
+      case 'listRoundLogs':
+        return this.logs.listByRound(args[0] as number);
       case 'startAgent':
         return this.agent.start();
       case 'stopAgent':

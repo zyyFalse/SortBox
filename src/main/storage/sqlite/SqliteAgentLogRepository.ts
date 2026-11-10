@@ -62,6 +62,14 @@ export class SqliteAgentLogRepository implements AgentLogRepository {
     return Promise.resolve(rows.map(mapLogView));
   }
 
+  /** 某一轮里的每条处理，按发生顺序排列。 */
+  listByRound(roundId: number): Promise<AgentLogView[]> {
+    const rows = this.database.raw
+      .prepare(`${LOG_VIEW_SQL} WHERE l.round_id = ? ORDER BY l.id ASC`)
+      .all(roundId) as LogRow[];
+    return Promise.resolve(rows.map(mapLogView));
+  }
+
   /** 某个文件的全部历史。 */
   listByMaterial(materialId: number): Promise<AgentLogView[]> {
     const rows = this.database.raw

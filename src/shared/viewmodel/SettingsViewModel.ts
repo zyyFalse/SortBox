@@ -12,6 +12,7 @@ export interface SettingsState extends ViewModelBaseState {
   observations: HabitObservation[];
   version: string;
   userDataDir: string;
+  notice: string | null;
 }
 
 /** 设置页。保存前的数值范围由主进程再检查一次。 */
@@ -27,7 +28,8 @@ export class SettingsViewModel extends ViewModelBase<void, SettingsState> {
       habits: null,
       observations: [],
       version: '',
-      userDataDir: ''
+      userDataDir: '',
+      notice: null
     });
     void this.refresh();
   }
@@ -85,7 +87,7 @@ export class SettingsViewModel extends ViewModelBase<void, SettingsState> {
     this.setState({ loading: true, error: null });
     try {
       const saved = await this.api.savePreferences(this.getState().draft);
-      this.setState({ loading: false, draft: saved });
+      this.setState({ loading: false, draft: saved, notice: '已保存。策略和定时间隔会马上生效。' });
     } catch (error) {
       this.captureError(error, '保存设置失败');
     }

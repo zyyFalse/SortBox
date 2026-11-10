@@ -115,6 +115,12 @@ export class IpcSortboxApi implements SortboxApi {
   getLatestRound(): Promise<AgentRound | null> {
     return this.call('getLatestRound', []);
   }
+  listRecentRounds(limit: number): Promise<AgentRound[]> {
+    return this.call('listRecentRounds', [limit]);
+  }
+  listRoundLogs(roundId: number): Promise<AgentLogView[]> {
+    return this.call('listRoundLogs', [roundId]);
+  }
   startAgent(): Promise<void> {
     return this.call('startAgent', []);
   }

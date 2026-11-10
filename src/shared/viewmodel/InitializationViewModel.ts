@@ -43,7 +43,12 @@ export class InitializationViewModel extends ViewModelBase<void, InitializationS
   /** 增加一个监视目录。 */
   async addWatchFolder(): Promise<void> {
     const picked = await this.api.pickDirectory('添加目录');
-    if (!picked || this.getState().watchFolders.includes(picked)) {
+    if (!picked) {
+      this.setState({ error: '没有选择目录，可以再点一次「添加目录」。' });
+      return;
+    }
+    if (this.getState().watchFolders.includes(picked)) {
+      this.setState({ error: '这个目录已经在监视列表里。' });
       return;
     }
     this.setState({ watchFolders: [...this.getState().watchFolders, picked], error: null });
@@ -58,6 +63,7 @@ export class InitializationViewModel extends ViewModelBase<void, InitializationS
   async setArchiveRoot(): Promise<void> {
     const picked = await this.api.pickDirectory('选择归档根目录');
     if (!picked) {
+      this.setState({ error: '没有选择归档根目录，可以再点一次。' });
       return;
     }
     const state = this.getState();
@@ -69,6 +75,7 @@ export class InitializationViewModel extends ViewModelBase<void, InitializationS
   async pickUnclassified(): Promise<void> {
     const picked = await this.api.pickDirectory('选择未分类目录');
     if (!picked) {
+      this.setState({ error: '没有选择未分类目录，可以再点一次。' });
       return;
     }
     this.setState({ unclassifiedDir: picked, unclassifiedTouched: true });

@@ -14,6 +14,7 @@ import { PresetDetailView } from './views/PresetDetailView';
 import { PresetListView } from './views/PresetListView';
 import { QueryView } from './views/QueryView';
 import { ResultView } from './views/ResultView';
+import { RoundDetailView } from './views/RoundDetailView';
 import { SettingsView } from './views/SettingsView';
 import { UnclassifiedView } from './views/UnclassifiedView';
 import { IpcSortboxApi } from './services/IpcSortboxApi';
@@ -25,7 +26,7 @@ function wrap<T extends object>(view: FunctionComponent<{ vm: T }>): FunctionCom
   return Wrapped;
 }
 
-/** 创建 API、十一个 ViewModel，并把视图登记进 ViewLocator。 */
+/** 创建 API 和页面，并把视图登记进 ViewLocator。 */
 export function bootstrap(): { services: ServiceLocator; view: ReactElement } {
   const api = new IpcSortboxApi();
   const services = new ServiceLocator();
@@ -50,6 +51,7 @@ export function bootstrap(): { services: ServiceLocator; view: ReactElement } {
   views.register(ContentNavigationConstant.RESULT, wrap(ResultView));
   views.register(ContentNavigationConstant.FILE_DETAIL, wrap(FileDetailView));
   views.register(ContentNavigationConstant.PRESET_DETAIL, wrap(PresetDetailView));
+  views.register(ContentNavigationConstant.ROUND_DETAIL, wrap(RoundDetailView));
   services.register('views', views);
   return { services, view: <MainView vm={main} views={views} /> };
 }

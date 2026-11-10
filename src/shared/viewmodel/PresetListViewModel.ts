@@ -9,6 +9,8 @@ export interface PresetListState extends ViewModelBaseState {
   presets: Preset[];
   templates: PresetTemplate[];
   archiveRoot: string;
+  pendingId: number | null;
+  notice: string | null;
 }
 
 /** 预设列表。删除前由界面弹出一次确认。 */
@@ -19,7 +21,15 @@ export class PresetListViewModel extends ViewModelBase<void, PresetListState> {
     private readonly api: SortboxApi,
     private readonly navigation: ContentNavigationService
   ) {
-    super({ loading: true, error: null, presets: [], templates: [], archiveRoot: '' });
+    super({
+      loading: true,
+      error: null,
+      presets: [],
+      templates: [],
+      archiveRoot: '',
+      pendingId: null,
+      notice: null
+    });
     this.unsubscribe = api.subscribe((event) => {
       if (event.type === 'data.changed' && event.scope === 'presets') {
         void this.refresh();
@@ -52,12 +62,17 @@ export class PresetListViewModel extends ViewModelBase<void, PresetListState> {
     this.navigation.navigateContent(ContentNavigationConstant.PRESET_DETAIL, { id: null, draft });
   }
 
-  /** 启用或停用。 */
+  /** 启用或停用。行颜色和提示语一起变，避免点了像没反应。 */
   async toggleEnabled(id: number, enabled: boolean): Promise<void> {
+    const name = this.getState().presets.find((preset) => preset.id === id)?.name ?? '预设';
+    this.setState({ pendingId: id, error: null });
     try {
       await this.api.setPresetEnabled(id, enabled);
       await this.refresh();
+      const notice = enabled ? `已启用「${name}」。之后命中的文件会归到这里。` : `已停用「${name}」。新文件不会再归到这里。`;
+      this.setState({ pendingId: null, notice });
     } catch (error) {
+      this.setState({ pendingId: null });
       this.captureError(error, '更新预设失败');
     }
   }

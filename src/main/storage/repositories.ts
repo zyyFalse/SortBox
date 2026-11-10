@@ -76,6 +76,7 @@ export interface AgentLogRepository {
   getById(id: number): Promise<AgentLog | null>;
   listRecent(limit: number): Promise<AgentLogView[]>;
   listByMaterial(materialId: number): Promise<AgentLogView[]>;
+  listByRound(roundId: number): Promise<AgentLogView[]>;
   query(query: LogQuery): Promise<AgentLogView[]>;
   findLatestUndoableArchive(): Promise<AgentLog | null>;
   latestByMaterial(materialId: number): Promise<AgentLog | null>;
@@ -88,6 +89,7 @@ export interface AgentLogRepository {
 export interface AgentRoundRepository {
   append(round: AgentRound): Promise<void>;
   latest(): Promise<AgentRound | null>;
+  listRecent(limit: number): Promise<AgentRound[]>;
 }
 
 /** 学习次数。习惯正文不在这张表里。 */

@@ -1,6 +1,6 @@
 :root {
-  color: #2b2620;
-  background: #f4efe6;
+  color: #111;
+  background: #fff;
   font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 14px;
 }
@@ -15,25 +15,37 @@ button, input, select {
 }
 
 button {
-  background: #1f6b4a;
+  background: #111;
   color: #fff;
-  border: 0;
-  border-radius: 6px;
+  border: 1px solid #111;
+  border-radius: 0;
   padding: 6px 12px;
   cursor: pointer;
 }
 
 button.ghost {
-  background: transparent;
-  color: #1f6b4a;
-  border: 1px solid #1f6b4a;
+  background: #fff;
+  color: #111;
 }
 
-button:disabled { opacity: 0.5; cursor: default; }
+button.selected {
+  background: #111;
+  color: #fff;
+  box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 4px #111;
+}
+
+button:active:not(:disabled) { background: #333; color: #fff; }
+
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
+
+button:disabled { opacity: 0.35; cursor: default; }
 
 input, select {
-  border: 1px solid #d7cfc2;
-  border-radius: 6px;
+  border: 1px solid #111;
+  border-radius: 0;
   padding: 6px 8px;
   background: #fff;
 }
@@ -42,8 +54,8 @@ input, select {
 
 .sidebar {
   width: 200px;
-  background: #1d3b30;
-  color: #f4efe6;
+  background: #111;
+  color: #fff;
   padding: 20px 12px;
   display: flex;
   flex-direction: column;
@@ -54,11 +66,14 @@ input, select {
 
 .sidebar button {
   background: transparent;
-  color: #f4efe6;
+  color: #fff;
   text-align: left;
+  border-color: transparent;
 }
 
-.sidebar button.active { background: #2f6b52; }
+.sidebar button.active { background: #fff; color: #111; }
+
+.sidebar button:active:not(:disabled) { background: #fff; color: #111; }
 
 .main { flex: 1; padding: 20px 24px; }
 
@@ -72,23 +87,49 @@ input, select {
 
 .card {
   background: #fff;
-  border: 1px solid #e4dccf;
-  border-radius: 10px;
+  border: 1px solid #111;
+  border-radius: 0;
   padding: 12px;
 }
 
 .card strong { display: block; font-size: 22px; margin-top: 4px; }
 
-table { width: 100%; border-collapse: collapse; background: #fff; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #111; }
 
-th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee4d6; vertical-align: top; }
+th, td { text-align: left; padding: 8px; border-bottom: 1px solid #111; vertical-align: top; }
 
-.error { color: #9a3b2f; }
+tr.is-off { background: #f2f2f2; color: #555; }
 
-.empty { color: #7a7268; }
+.error {
+  color: #111;
+  background: #fff;
+  border: 1px solid #111;
+  padding: 8px 10px;
+  font-weight: 700;
+}
+
+.empty { color: #444; }
 
 .form { display: grid; grid-template-columns: 140px 1fr; gap: 8px 12px; align-items: center; max-width: 760px; }
 
 .stack { display: flex; flex-direction: column; gap: 6px; }
 
-.about { color: #6d655c; }
+.about { color: #333; }
+
+.banner, .notice, .guide {
+  border: 1px solid #111;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.banner.warn { background: #111; color: #fff; }
+
+.notice { border-left-width: 4px; }
+
+.guide ol { margin: 8px 0 0; padding-left: 20px; }
+
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-top: 8px; }
+
+.step { border: 1px solid #111; padding: 8px; }
+
+.step strong { display: block; margin-bottom: 4px; }

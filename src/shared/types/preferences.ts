@@ -30,7 +30,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   triggerPolicy: 'idle',
   idleSettleMs: 3000,
   maxDeferMs: 30000,
-  intervalMs: 60000,
+  intervalMs: 300000,
   intervalFallbackMs: 0,
   stabilityWindowMs: 800,
   unclassifiedDir: '',

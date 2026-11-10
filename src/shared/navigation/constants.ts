@@ -18,7 +18,8 @@ export const MenuNavigationConstant = {
 export const ContentNavigationConstant = {
   RESULT: 'Result',
   FILE_DETAIL: 'FileDetail',
-  PRESET_DETAIL: 'PresetDetail'
+  PRESET_DETAIL: 'PresetDetail',
+  ROUND_DETAIL: 'RoundDetail'
 } as const;
 
 /** 菜单渲染顺序。 */

@@ -10,6 +10,7 @@ export function PresetListView(props: { vm: PresetListViewModel }): ReactElement
     <section className="page" data-view="Presets">
       <h1>预设</h1>
       {state.error ? <p className="error">{state.error}</p> : null}
+      {state.notice ? <p className="notice">{state.notice}</p> : null}
       <div className="row">
         <button type="button" onClick={(): void => props.vm.create()}>新增预设</button>
         <button className="ghost" type="button" onClick={(): void => void props.vm.importOne()}>导入</button>
@@ -26,14 +27,19 @@ export function PresetListView(props: { vm: PresetListViewModel }): ReactElement
       <table>
         <tbody>
           {state.presets.map((preset) => (
-            <tr key={preset.id}>
+            <tr key={preset.id} className={preset.enabled ? '' : 'is-off'}>
               <td>{preset.name}</td>
-              <td>{preset.enabled ? '启用' : '停用'}</td>
+              <td>{preset.enabled ? '启用' : '已停用'}</td>
               <td>{preset.targetDir}</td>
               <td className="row">
                 <button className="ghost" type="button" onClick={(): void => props.vm.edit(preset.id)}>打开</button>
-                <button className="ghost" type="button" onClick={(): void => void props.vm.toggleEnabled(preset.id, !preset.enabled)}>
-                  {preset.enabled ? '停用' : '启用'}
+                <button
+                  className={preset.enabled ? 'ghost' : 'selected'}
+                  type="button"
+                  disabled={state.pendingId === preset.id}
+                  onClick={(): void => void props.vm.toggleEnabled(preset.id, !preset.enabled)}
+                >
+                  {state.pendingId === preset.id ? '请稍候…' : preset.enabled ? '停用' : '启用'}
                 </button>
                 <button className="ghost" type="button" onClick={(): void => void props.vm.exportOne(preset.id)}>导出</button>
                 <button

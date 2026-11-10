@@ -109,6 +109,8 @@ const SCHEMAS: Record<string, z.ZodType<unknown[]>> = {
   getAgentSnapshot: z.tuple([]),
   getAgentStats: z.tuple([]),
   getLatestRound: z.tuple([]),
+  listRecentRounds: z.tuple([z.number().int().positive().max(100)]),
+  listRoundLogs: z.tuple([z.number().int().nonnegative()]),
   startAgent: z.tuple([]),
   stopAgent: z.tuple([]),
   pauseAgent: z.tuple([]),

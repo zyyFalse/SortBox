@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { deletionError } from '../../src/main/preset/presetRules';
 import { Database } from '../../src/main/storage/sqlite/Database';
 import { SqliteAgentLogRepository } from '../../src/main/storage/sqlite/SqliteAgentLogRepository';
+import { SqliteAgentRoundRepository } from '../../src/main/storage/sqlite/SqliteAgentRoundRepository';
 import { SqliteHabitRepository } from '../../src/main/storage/sqlite/SqliteHabitRepository';
 import { SqliteMaterialRepository } from '../../src/main/storage/sqlite/SqliteMaterialRepository';
 import { SqlitePreferenceRepository } from '../../src/main/storage/sqlite/SqlitePreferenceRepository';
@@ -178,6 +179,45 @@ describe('sqlite repositories', (): void => {
     expect(prefs.agentDryRun).toBe(true);
     expect(prefs.triggerPolicy).toBe('idle');
     expect(prefs.idleSettleMs).toBe(3000);
+    expect(prefs.intervalMs).toBe(300000);
+  });
+
+  it('按轮次取出合计和这一轮的记录', async (): Promise<void> => {
+    const db = open();
+    const rounds = new SqliteAgentRoundRepository(db);
+    const logs = new SqliteAgentLogRepository(db);
+    const round = {
+      reason: 'manual' as const,
+      startedAt: 1,
+      finishedAt: 2,
+      scanned: 2,
+      archived: 1,
+      unclassified: 1,
+      failed: 0,
+      simulated: 0,
+      skipped: 0,
+      deferred: 0
+    };
+    await rounds.append({ ...round, id: 10 });
+    await rounds.append({ ...round, id: 20, archived: 0 });
+    const base = {
+      materialId: null,
+      presetId: null,
+      action: 'archived' as const,
+      toPath: null,
+      reason: '归档',
+      trace: 'trace',
+      durationMs: 1,
+      dryRun: false,
+      undone: false,
+      undoneAt: null
+    };
+    await logs.append({ ...base, roundId: 10, fromPath: 'C:/down/a.pdf', createdAt: 1 });
+    await logs.append({ ...base, roundId: 20, fromPath: 'C:/down/b.pdf', createdAt: 2 });
+    const listed = await rounds.listRecent(8);
+    expect(listed.map((item) => item.id)).toEqual([20, 10]);
+    const rows = await logs.listByRound(10);
+    expect(rows.map((item) => item.fromPath)).toEqual(['C:/down/a.pdf']);
   });
 
   it('同一习惯观测第二次后 hits 为 2', async (): Promise<void> => {

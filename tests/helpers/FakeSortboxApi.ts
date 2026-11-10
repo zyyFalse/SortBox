@@ -188,6 +188,12 @@ export class FakeSortboxApi implements SortboxApi {
   getLatestRound(): Promise<AgentRound | null> {
     return Promise.resolve(null);
   }
+  listRecentRounds(): Promise<AgentRound[]> {
+    return Promise.resolve([]);
+  }
+  listRoundLogs(): Promise<AgentLogView[]> {
+    return Promise.resolve([]);
+  }
   startAgent(): Promise<void> {
     return Promise.resolve();
   }
