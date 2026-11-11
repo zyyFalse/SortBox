@@ -57,6 +57,8 @@ pnpm dist
 
 产物在 `dist` 目录，文件名类似 `Sortbox Setup 0.1.0.exe`。把这一个文件拷走即可。数据库和习惯文件仍写在对方自己的用户目录里，不在安装目录里。
 
+这台 Windows 如果没有创建符号链接的权限，签名工具解压会失败。配置里已关掉 `signAndEditExecutable`，安装包可以生成，只是没有代码签名。对方的系统可能会多问一次是否信任这个程序。
+
 打包装之前，这台电脑必须已经能 `pnpm dev` 打开窗口。`better-sqlite3` 是原生模块，安装包里要带上 Electron 30 能加载的那一份。没有 Visual Studio 时，按下一节放好预编译文件再执行 `pnpm dist`。
 
 ## 原生模块装不上时

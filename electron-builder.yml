@@ -12,6 +12,8 @@ asarUnpack:
 win:
   target:
     - nsis
+  # 当前环境不能创建符号链接，签名工具解压会失败。不签名仍可生成安装包。
+  signAndEditExecutable: false
 nsis:
   oneClick: true
   perMachine: false
