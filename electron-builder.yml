@@ -1,6 +1,6 @@
 appId: app.sortbox.desktop
 productName: Sortbox
-npmRebuild: true
+npmRebuild: false
 directories:
   output: dist
 files:
