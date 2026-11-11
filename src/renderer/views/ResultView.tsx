@@ -13,6 +13,14 @@ export function ResultView(props: { vm: ResultViewModel }): ReactElement {
       {state.error ? <p className="error">{state.error}</p> : null}
       {state.items.length === 0 ? <Empty text="没有匹配的文件" /> : null}
       <table>
+        <thead>
+          <tr>
+            <th>文件</th>
+            <th>预设</th>
+            <th>状态</th>
+            <th></th>
+          </tr>
+        </thead>
         <tbody>
           {state.items.map((item) => (
             <tr key={item.id}>
@@ -20,7 +28,7 @@ export function ResultView(props: { vm: ResultViewModel }): ReactElement {
               <td>{item.presetName ?? '—'}</td>
               <td>{materialStatusLabel(item.status)}</td>
               <td>
-                <button type="button" onClick={(): void => props.vm.openDetail(item.id)}>打开</button>
+                <button className="ghost" type="button" onClick={(): void => props.vm.openDetail(item.id)}>打开</button>
               </td>
             </tr>
           ))}

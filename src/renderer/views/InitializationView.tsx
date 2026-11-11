@@ -32,12 +32,12 @@ export function InitializationView(props: { vm: InitializationViewModel }): Reac
           </li>
         ))}
       </ul>
-      <button type="button" onClick={(): void => void props.vm.addWatchFolder()}>
+      <button className="ghost" type="button" onClick={(): void => void props.vm.addWatchFolder()}>
         添加目录
       </button>
       <h2>归档根目录</h2>
       <p>{state.archiveRoot || '尚未选择'}</p>
-      <button type="button" onClick={(): void => void props.vm.setArchiveRoot()}>
+      <button className="ghost" type="button" onClick={(): void => void props.vm.setArchiveRoot()}>
         选择归档根目录
       </button>
       <h2>预设包</h2>

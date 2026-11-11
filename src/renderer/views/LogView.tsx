@@ -1,6 +1,6 @@
-import type { ReactElement } from 'react';
+import { Fragment, type ReactElement } from 'react';
 import type { AgentAction } from '@shared/types/domain';
-import { agentActionLabel, roundLabel } from '@shared/types/domain';
+import { agentActionLabel } from '@shared/types/domain';
 import type { LogViewModel } from '@shared/viewmodel/LogViewModel';
 import { Empty } from '../components/Empty';
 import { endOfLocalDay, formatDateInput, formatTime, startOfLocalDay } from '../format';
@@ -54,25 +54,38 @@ export function LogView(props: { vm: LogViewModel }): ReactElement {
       </div>
       {state.items.length === 0 ? <Empty text="暂无处理记录" /> : null}
       <table>
+        <thead>
+          <tr>
+            <th>时间</th>
+            <th>结果</th>
+            <th>文件</th>
+            <th>操作</th>
+          </tr>
+        </thead>
         <tbody>
           {state.items.map((log) => {
             const canUndo = log.action === 'archived' && !log.undone && !log.dryRun;
             return (
-              <tr key={log.id} onClick={(): void => props.vm.toggle(log.id)}>
-                <td>{formatTime(log.createdAt)}</td>
-                <td>{roundLabel(log.roundId)}</td>
-                <td>{agentActionLabel(log.action)}</td>
-                <td>{log.fileName ?? log.fromPath}</td>
-                <td>
-                  {canUndo ? (
-                    <button type="button" onClick={(event): void => { event.stopPropagation(); void props.vm.undo(log.id); }}>撤销</button>
-                  ) : null}
-                  {log.materialId !== null ? (
-                    <button className="ghost" type="button" onClick={(event): void => { event.stopPropagation(); props.vm.openMaterial(log.materialId); }}>打开</button>
-                  ) : null}
-                </td>
-                {state.expandedId === log.id ? <td>{log.reason}<br />{log.trace}</td> : null}
-              </tr>
+              <Fragment key={log.id}>
+                <tr onClick={(): void => props.vm.toggle(log.id)}>
+                  <td>{formatTime(log.createdAt)}</td>
+                  <td>{agentActionLabel(log.action)}</td>
+                  <td>{log.fileName ?? log.fromPath}</td>
+                  <td>
+                    {canUndo ? (
+                      <button className="ghost" type="button" onClick={(event): void => { event.stopPropagation(); void props.vm.undo(log.id); }}>撤销</button>
+                    ) : null}
+                    {log.materialId !== null ? (
+                      <button className="ghost" type="button" onClick={(event): void => { event.stopPropagation(); props.vm.openMaterial(log.materialId); }}>打开</button>
+                    ) : null}
+                  </td>
+                </tr>
+                {state.expandedId === log.id ? (
+                  <tr>
+                    <td colSpan={4}>原因：{log.reason}<br />依据：{log.trace}</td>
+                  </tr>
+                ) : null}
+              </Fragment>
             );
           })}
         </tbody>

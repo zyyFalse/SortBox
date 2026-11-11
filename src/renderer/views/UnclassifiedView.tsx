@@ -14,13 +14,13 @@ export function UnclassifiedView(props: { vm: UnclassifiedViewModel }): ReactEle
       {state.error ? <p className="error">{state.error}</p> : null}
       <div className="row">
         {state.summary.map((item) => (
-          <span className="card" key={item.extension}>{item.extension} {item.count}</span>
+          <span className="chip" key={item.extension}>{item.extension} {item.count}</span>
         ))}
       </div>
       {state.items.length === 0 ? <Empty text="没有未分类的文件" /> : null}
       <table>
         <thead>
-          <tr><th>文件</th><th>状态</th><th>大小</th><th></th></tr>
+          <tr><th>文件</th><th>状态</th><th>大小</th><th>操作</th></tr>
         </thead>
         <tbody>
           {state.items.map((item) => (
@@ -33,7 +33,7 @@ export function UnclassifiedView(props: { vm: UnclassifiedViewModel }): ReactEle
                 <button className="ghost" type="button" onClick={(): void => void props.vm.reveal(item.currentPath)}>在文件夹中显示</button>
                 <button className="ghost" type="button" onClick={(): void => void props.vm.createPresetFrom(item.id)}>按此文件名生成预设</button>
                 {item.status === 'held' ? (
-                  <button type="button" onClick={(): void => void props.vm.releaseHeld(item.id)}>重新分拣</button>
+                  <button className="ghost" type="button" onClick={(): void => void props.vm.releaseHeld(item.id)}>重新分拣</button>
                 ) : null}
               </td>
             </tr>

@@ -1,6 +1,6 @@
 import { useState, type ReactElement } from 'react';
 import type { AgentSnapshot, AgentState, TriggerPolicy } from '@shared/types/domain';
-import { agentStateLabel, roundLabel, triggerPolicyLabel, triggerReasonLabel } from '@shared/types/domain';
+import { agentStateLabel, triggerPolicyLabel, triggerReasonLabel } from '@shared/types/domain';
 import { describeRound, type DashboardViewModel } from '@shared/viewmodel/DashboardViewModel';
 import { Empty } from '../components/Empty';
 import { formatTime } from '../format';
@@ -35,17 +35,16 @@ export function DashboardView(props: { vm: DashboardViewModel }): ReactElement {
         <span>策略 {snapshot ? triggerPolicyLabel(snapshot.policy) : '…'}</span>
         <span>静默窗口 {snapshot ? snapshot.idleSettleMs : 0} ms</span>
       </div>
-      <div className="cards">
-        <div className="card">今日已整理<strong>{stats?.archivedToday ?? 0}</strong></div>
-        <div className="card">累计归档<strong>{stats?.archivedTotal ?? 0}</strong></div>
-        <div className="card">未分类<strong>{stats?.unclassifiedCount ?? 0}</strong></div>
-        <div className="card">已撤销<strong>{stats?.heldCount ?? 0}</strong></div>
-        <div className="card">今日失败<strong>{stats?.failedToday ?? 0}</strong></div>
+      <div className="stats">
+        <div className="stat"><span>今日已整理</span><strong>{stats?.archivedToday ?? 0}</strong></div>
+        <div className="stat"><span>累计归档</span><strong>{stats?.archivedTotal ?? 0}</strong></div>
+        <div className="stat"><span>未分类</span><strong>{stats?.unclassifiedCount ?? 0}</strong></div>
+        <div className="stat"><span>已撤销</span><strong>{stats?.heldCount ?? 0}</strong></div>
+        <div className="stat"><span>今日失败</span><strong>{stats?.failedToday ?? 0}</strong></div>
       </div>
       {state.round ? (
-        <div className="card">
-          <strong>最近一轮</strong>
-          <p>{formatTime(state.round.finishedAt)} · {triggerReasonLabel(state.round.reason)}</p>
+        <div className="summary">
+          <strong>最近一轮 · {formatTime(state.round.finishedAt)} · {triggerReasonLabel(state.round.reason)}</strong>
           <p>{describeRound(state.round)}</p>
         </div>
       ) : (
@@ -53,19 +52,19 @@ export function DashboardView(props: { vm: DashboardViewModel }): ReactElement {
       )}
       <p>{habitText}</p>
       <div className="row">
-        <button type="button" disabled={pending !== null || !can(agent, 'start')} onClick={(): void => void props.vm.start()}>
+        <button className={agent === 'stopped' ? '' : 'ghost'} type="button" disabled={pending !== null || !can(agent, 'start')} onClick={(): void => void props.vm.start()}>
           {pending === 'start' ? '请稍候…' : '启动'}
         </button>
-        <button type="button" disabled={pending !== null || !can(agent, 'pause')} onClick={(): void => void props.vm.pause()}>
+        <button className="ghost" type="button" disabled={pending !== null || !can(agent, 'pause')} onClick={(): void => void props.vm.pause()}>
           {pending === 'pause' ? '请稍候…' : '暂停'}
         </button>
-        <button type="button" disabled={pending !== null || !can(agent, 'resume')} onClick={(): void => void props.vm.resume()}>
+        <button className={agent === 'paused' ? '' : 'ghost'} type="button" disabled={pending !== null || !can(agent, 'resume')} onClick={(): void => void props.vm.resume()}>
           {pending === 'resume' ? '请稍候…' : '恢复'}
         </button>
-        <button type="button" disabled={pending !== null || !can(agent, 'stop')} onClick={(): void => void props.vm.stop()}>
+        <button className="ghost" type="button" disabled={pending !== null || !can(agent, 'stop')} onClick={(): void => void props.vm.stop()}>
           {pending === 'stop' ? '请稍候…' : '停止'}
         </button>
-        <button type="button" disabled={pending !== null || !can(agent, 'run')} onClick={(): void => void props.vm.runNow()}>
+        <button className={agent !== 'stopped' && agent !== 'paused' ? '' : 'ghost'} type="button" disabled={pending !== null || !can(agent, 'run')} onClick={(): void => void props.vm.runNow()}>
           {pending === 'run' ? '请稍候…' : '立即整理'}
         </button>
         <button
@@ -96,16 +95,26 @@ export function DashboardView(props: { vm: DashboardViewModel }): ReactElement {
       <h2>每次整理</h2>
       {state.rounds.length === 0 ? <Empty text="还没有整理轮次" /> : null}
       <table>
+        <thead>
+          <tr>
+            <th>时间</th>
+            <th>怎么开始的</th>
+            <th>归档</th>
+            <th>未分类</th>
+            <th>失败</th>
+            <th>是否移动文件</th>
+            <th></th>
+          </tr>
+        </thead>
         <tbody>
           {state.rounds.map((round) => (
             <tr key={round.id}>
               <td>{formatTime(round.finishedAt)}</td>
               <td>{triggerReasonLabel(round.reason)}</td>
-              <td>{roundLabel(round.id)}</td>
-              <td>归档 {round.archived}</td>
-              <td>未分类 {round.unclassified}</td>
-              <td>失败 {round.failed}</td>
-              <td>{round.simulated > 0 ? `试运行 ${round.simulated}` : '正式'}</td>
+              <td>{round.archived}</td>
+              <td>{round.unclassified}</td>
+              <td>{round.failed}</td>
+              <td>{round.simulated > 0 ? '试运行，未移动' : '已移动'}</td>
               <td>
                 <button className="ghost" type="button" onClick={(): void => props.vm.openRound(round.id)}>查看</button>
               </td>

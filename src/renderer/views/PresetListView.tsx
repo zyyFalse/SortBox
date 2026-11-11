@@ -25,6 +25,14 @@ export function PresetListView(props: { vm: PresetListViewModel }): ReactElement
       </div>
       {state.presets.length === 0 ? <Empty text="还没有预设，先启用预设包" /> : null}
       <table>
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th>状态</th>
+            <th>目标目录</th>
+            <th>操作</th>
+          </tr>
+        </thead>
         <tbody>
           {state.presets.map((preset) => (
             <tr key={preset.id} className={preset.enabled ? '' : 'is-off'}>
@@ -43,6 +51,7 @@ export function PresetListView(props: { vm: PresetListViewModel }): ReactElement
                 </button>
                 <button className="ghost" type="button" onClick={(): void => void props.vm.exportOne(preset.id)}>导出</button>
                 <button
+                  className="ghost"
                   type="button"
                   onClick={(): void => {
                     if (window.confirm(`删除预设「${preset.name}」？`)) {
